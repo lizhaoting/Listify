@@ -10,6 +10,11 @@ class Welcome extends StatelessWidget {
         children: <Widget>[
           WelcomeText('L'),
           WelcomeText('i'),
+          WelcomeText('s'),
+          WelcomeText('t'),
+          WelcomeText('i'),
+          WelcomeText('f'),
+          WelcomeText('y'),
         ],
       ),
     );
@@ -17,16 +22,17 @@ class Welcome extends StatelessWidget {
 }
 
 class AnimatedText extends AnimatedWidget {
-  AnimatedText({Key key, Animation<double> animation, String charactar})
+  final String charactar;
+  AnimatedText(this.charactar, {Key key, Animation<double> animation})
       : super(key: key, listenable: animation);
 
   Widget build(BuildContext context) {
     final Animation<double> animation = listenable;
-    // final String charactar = string;
+    // final String charactar = 'LL';
     return new Center(
       child: Transform.translate(
             offset: Offset(0, animation.value),
-            child: Text('L',
+            child: Text(this.charactar,
               style: TextStyle(
                 color: Colors.blue,
                 fontSize: 30.0,
@@ -69,8 +75,8 @@ class WelcomeTextState extends State<WelcomeText>
   @override
   Widget build(BuildContext context) {
     return AnimatedText(
+      charactar,
       animation: animation,
-      charactar: charactar,
     );
   }
 
