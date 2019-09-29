@@ -31,23 +31,23 @@ class AnimatedText extends AnimatedWidget {
     // final String charactar = 'LL';
     return new Center(
       child: Transform.translate(
-            offset: Offset(0, animation.value),
-            child: Text(this.charactar,
-              style: TextStyle(
-                color: Colors.blue,
-                fontSize: 30.0,
-                height: 1.2,
-                decoration: TextDecoration.none,
-              )
-            ),
+        offset: Offset(0, animation.value),
+        child: Text(
+          this.charactar,
+          style: TextStyle(
+            color: Colors.blue,
+            fontSize: 30.0,
+            height: 1.2,
+            decoration: TextDecoration.none,
           )
-    );
+        ),
+    ));
   }
 }
 
 class WelcomeText extends StatefulWidget {
   final String charactar;
-  WelcomeText(String charactar): this.charactar = charactar;
+  WelcomeText(String charactar) : this.charactar = charactar;
 
   @override
   WelcomeTextState createState() => new WelcomeTextState(charactar);
@@ -56,19 +56,31 @@ class WelcomeText extends StatefulWidget {
 class WelcomeTextState extends State<WelcomeText>
     with SingleTickerProviderStateMixin {
   Animation<double> animation;
+  Animation<double> curve;
   AnimationController controller;
 
   final String charactar;
-  WelcomeTextState(String charactar): this.charactar = charactar;
+  WelcomeTextState(String charactar) : this.charactar = charactar;
 
   initState() {
     super.initState();
     controller = new AnimationController(
-      duration: const Duration(seconds: 3), vsync: this
-    );
+        duration: const Duration(seconds: 3), vsync: this);
+
+    curve = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
+    // AnimationController controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
+    // CurvedAnimation curve = CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
 
     animation = new Tween(begin: 0.0, end: 30.0).animate(controller);
-
+    // animation.addStatusListener((status) {
+    //   if (status == AnimationStatus.completed) {
+    //     //动画执行结束时反向执行动画
+    //     controller.reverse();
+    //   } else if (status == AnimationStatus.dismissed) {
+    //     //动画恢复到初始状态时执行动画（正向）
+    //     controller.forward();
+    //   }
+    // });
     controller.forward();
   }
 
@@ -76,7 +88,7 @@ class WelcomeTextState extends State<WelcomeText>
   Widget build(BuildContext context) {
     return AnimatedText(
       charactar,
-      animation: animation,
+      animation: curve,
     );
   }
 
