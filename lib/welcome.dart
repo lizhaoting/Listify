@@ -23,8 +23,8 @@ class Welcome extends StatelessWidget {
 
 class AnimatedText extends AnimatedWidget {
   final String charactar;
-  AnimatedText(this.charactar, {Key key, Animation<double> animation})
-      : super(key: key, listenable: animation);
+  AnimatedText(this.charactar, {Key key, Animation<double> animation, Animation<double> curve})
+      : super(key: key, listenable: curve);
 
   Widget build(BuildContext context) {
     final Animation<double> animation = listenable;
@@ -54,7 +54,7 @@ class WelcomeText extends StatefulWidget {
 }
 
 class WelcomeTextState extends State<WelcomeText>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   Animation<double> animation;
   Animation<double> curve;
   AnimationController controller;
@@ -64,14 +64,23 @@ class WelcomeTextState extends State<WelcomeText>
 
   initState() {
     super.initState();
-    controller = new AnimationController(
-        duration: const Duration(seconds: 3), vsync: this);
+    // controller = new AnimationController(
+        // duration: const Duration(seconds: 3), vsync: this);
 
-    curve = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
-    // AnimationController controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
+    // controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
+
     // CurvedAnimation curve = CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
 
-    animation = new Tween(begin: 0.0, end: 30.0).animate(controller);
+    // curve = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
+    
+    // animation = new Tween(begin: 0.0, end: 30.0).animate(controller);
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 1000), vsync: this);
+    curve = CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+    animation = Tween(begin: 0.0, end: 60.0).animate(controller);
+    animation.addListener(() {
+      setState(() {});
+    });
     // animation.addStatusListener((status) {
     //   if (status == AnimationStatus.completed) {
     //     //动画执行结束时反向执行动画
@@ -88,7 +97,8 @@ class WelcomeTextState extends State<WelcomeText>
   Widget build(BuildContext context) {
     return AnimatedText(
       charactar,
-      animation: curve,
+      animation: animation,
+      curve: curve,
     );
   }
 
