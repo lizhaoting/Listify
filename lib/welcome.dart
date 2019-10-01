@@ -23,15 +23,14 @@ class Welcome extends StatelessWidget {
 
 class AnimatedText extends AnimatedWidget {
   final String charactar;
-  AnimatedText(this.charactar, {Key key, Animation<double> animation, Animation<double> curve})
+  final Animation<double> curve;
+  AnimatedText(this.charactar, this.curve, {Key key, Animation<double> animation})
       : super(key: key, listenable: curve);
 
   Widget build(BuildContext context) {
-    final Animation<double> animation = listenable;
-    // final String charactar = 'LL';
     return new Center(
       child: Transform.translate(
-        offset: Offset(0, animation.value),
+        offset: Offset(0, curve.value * 100),
         child: Text(
           this.charactar,
           style: TextStyle(
@@ -64,32 +63,23 @@ class WelcomeTextState extends State<WelcomeText>
 
   initState() {
     super.initState();
-    // controller = new AnimationController(
-        // duration: const Duration(seconds: 3), vsync: this);
 
-    // controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
-
-    // CurvedAnimation curve = CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
-
-    // curve = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
-    
-    // animation = new Tween(begin: 0.0, end: 30.0).animate(controller);
     controller = AnimationController(
-        duration: const Duration(milliseconds: 1000), vsync: this);
+        duration: const Duration(milliseconds: 100), vsync: this);
     curve = CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
     animation = Tween(begin: 0.0, end: 60.0).animate(controller);
     animation.addListener(() {
       setState(() {});
     });
-    // animation.addStatusListener((status) {
-    //   if (status == AnimationStatus.completed) {
-    //     //动画执行结束时反向执行动画
-    //     controller.reverse();
-    //   } else if (status == AnimationStatus.dismissed) {
-    //     //动画恢复到初始状态时执行动画（正向）
-    //     controller.forward();
-    //   }
-    // });
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        //动画执行结束时反向执行动画
+        controller.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        //动画恢复到初始状态时执行动画（正向）
+        controller.forward();
+      }
+    });
     controller.forward();
   }
 
@@ -97,8 +87,8 @@ class WelcomeTextState extends State<WelcomeText>
   Widget build(BuildContext context) {
     return AnimatedText(
       charactar,
+      curve,
       animation: animation,
-      curve: curve,
     );
   }
 
