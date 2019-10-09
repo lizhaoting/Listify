@@ -24,22 +24,26 @@ class Welcome extends StatelessWidget {
 class AnimatedText extends AnimatedWidget {
   final String charactar;
   final Animation<double> curve;
-  AnimatedText(this.charactar, this.curve, {Key key, Animation<double> animation})
+  final Animation<double> shakeAnimation;
+  AnimatedText(this.charactar, this.curve, this.shakeAnimation,
+      {Key key, Animation<double> animation})
       : super(key: key, listenable: curve);
 
   Widget build(BuildContext context) {
     return new Center(
-      child: Transform.translate(
-        offset: Offset(0, curve.value * 100),
-        child: Text(
-          this.charactar,
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 30.0,
-            height: 1.2,
-            decoration: TextDecoration.none,
-          )
-        ),
+        child: Transform.translate(
+      offset: Offset(0, curve.value * 100),
+      child: Transform.rotate(
+        //旋转90度
+        angle: shakeAnimation.value,
+        child: Text(this.charactar,
+            style: TextStyle(
+              color: Colors.blue,
+              fontSize: 30.0,
+              height: 1.2,
+              decoration: TextDecoration.none,
+            )),
+      ),
     ));
   }
 }
@@ -54,9 +58,11 @@ class WelcomeText extends StatefulWidget {
 
 class WelcomeTextState extends State<WelcomeText>
     with TickerProviderStateMixin {
-  Animation<double> animation;
+  Animation<double> moveAnimation;
+  Animation<double> shakeAnimation;
   Animation<double> curve;
-  AnimationController controller;
+  AnimationController moveController;
+  AnimationController shakeController;
 
   final String charactar;
   WelcomeTextState(String charactar) : this.charactar = charactar;
@@ -64,23 +70,39 @@ class WelcomeTextState extends State<WelcomeText>
   initState() {
     super.initState();
 
-    controller = AnimationController(
+    moveController = AnimationController(
+        duration: const Duration(milliseconds: 1000), vsync: this);
+
+    shakeController = AnimationController(
         duration: const Duration(milliseconds: 100), vsync: this);
-    curve = CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
-    animation = Tween(begin: 0.0, end: 60.0).animate(controller);
-    animation.addListener(() {
+
+    curve = CurvedAnimation(parent: moveController, curve: Curves.bounceOut);
+
+    moveAnimation = Tween(begin: 0.0, end: 30.0).animate(moveController);
+    shakeAnimation = Tween(begin: -0.15, end: 0.15).animate(shakeController);
+
+    // 抖动动画循环播放
+    shakeAnimation.addListener(() {
       setState(() {});
     });
-    animation.addStatusListener((status) {
+    shakeAnimation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        //动画执行结束时反向执行动画
-        controller.reverse();
+        shakeController.reverse();
       } else if (status == AnimationStatus.dismissed) {
-        //动画恢复到初始状态时执行动画（正向）
-        controller.forward();
+        shakeController.forward();
       }
     });
-    controller.forward();
+
+    // 下落到底时停止抖动动画
+    moveController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        shakeController.dispose();
+      }
+    });
+
+    // 启动动画
+    shakeController.forward();
+    moveController.forward();
   }
 
   @override
@@ -88,12 +110,24 @@ class WelcomeTextState extends State<WelcomeText>
     return AnimatedText(
       charactar,
       curve,
-      animation: animation,
+      shakeAnimation,
+      animation: moveAnimation,
     );
   }
 
   dispose() {
-    controller.dispose();
+    moveController.dispose();
     super.dispose();
   }
 }
+
+// shakeAnimation.addListener(() {
+//   setState(() {});
+// });
+// shakeAnimation.addStatusListener((status) {
+//   if (status == AnimationStatus.completed) {
+//     shakeController.reverse();
+//   } else if (status == AnimationStatus.dismissed) {
+//     shakeController.forward();
+//   }
+// });
