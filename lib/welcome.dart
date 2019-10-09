@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
+
+/* 欢迎页需要通过网络请求获取数据 */
 
 class Welcome extends StatelessWidget {
   @override
@@ -32,7 +35,7 @@ class AnimatedText extends AnimatedWidget {
   Widget build(BuildContext context) {
     return new Center(
         child: Transform.translate(
-      offset: Offset(0, curve.value * 100),
+      offset: Offset(0, curve.value * 70),
       child: Transform.rotate(
         //旋转90度
         angle: shakeAnimation.value,
@@ -78,8 +81,14 @@ class WelcomeTextState extends State<WelcomeText>
 
     curve = CurvedAnimation(parent: moveController, curve: Curves.bounceOut);
 
-    moveAnimation = Tween(begin: 0.0, end: 30.0).animate(moveController);
+    moveAnimation = Tween(begin: 0.0, end: 10.0).animate(moveController);
     shakeAnimation = Tween(begin: -0.15, end: 0.15).animate(shakeController);
+
+    // 下落动画延迟
+    var delay = 100 * Random().nextInt(10);
+    Future.delayed(Duration(milliseconds: delay),() {
+      moveController.forward();
+    });
 
     // 抖动动画循环播放
     shakeAnimation.addListener(() {
@@ -94,15 +103,16 @@ class WelcomeTextState extends State<WelcomeText>
     });
 
     // 下落到底时停止抖动动画
-    moveController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        shakeController.dispose();
-      }
-    });
+    // moveController.addStatusListener((status) {
+    //   if (status == AnimationStatus.completed) {
+    //     shakeController.dispose();
+    //   } else if (status == AnimationStatus.dismissed) {
+    //     shakeController.forward();
+    //   }
+    // });
 
     // 启动动画
     shakeController.forward();
-    moveController.forward();
   }
 
   @override
@@ -120,14 +130,3 @@ class WelcomeTextState extends State<WelcomeText>
     super.dispose();
   }
 }
-
-// shakeAnimation.addListener(() {
-//   setState(() {});
-// });
-// shakeAnimation.addStatusListener((status) {
-//   if (status == AnimationStatus.completed) {
-//     shakeController.reverse();
-//   } else if (status == AnimationStatus.dismissed) {
-//     shakeController.forward();
-//   }
-// });
