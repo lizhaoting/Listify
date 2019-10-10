@@ -35,19 +35,22 @@ class AnimatedText extends AnimatedWidget {
   Widget build(BuildContext context) {
     return new Center(
         child: Transform.translate(
-      offset: Offset(0, curve.value * 70),
-      child: Transform.rotate(
-        //旋转90度
-        angle: shakeAnimation.value,
-        child: Text(this.charactar,
+        offset: Offset(0, curve.value * 70),
+        child: Transform.rotate(
+          //旋转90度
+          angle: shakeAnimation.value,
+          child: Text(
+            this.charactar,
             style: TextStyle(
               color: Colors.blue,
               fontSize: 30.0,
               height: 1.2,
               decoration: TextDecoration.none,
-            )),
-      ),
-    ));
+            )
+          ),
+        ),
+      )
+    );
   }
 }
 
@@ -59,8 +62,7 @@ class WelcomeText extends StatefulWidget {
   WelcomeTextState createState() => new WelcomeTextState(charactar);
 }
 
-class WelcomeTextState extends State<WelcomeText>
-    with TickerProviderStateMixin {
+class WelcomeTextState extends State<WelcomeText> with TickerProviderStateMixin {
   Animation<double> moveAnimation;
   Animation<double> shakeAnimation;
   Animation<double> curve;
@@ -73,11 +75,9 @@ class WelcomeTextState extends State<WelcomeText>
   initState() {
     super.initState();
 
-    moveController = AnimationController(
-        duration: const Duration(milliseconds: 1000), vsync: this);
+    moveController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
 
-    shakeController = AnimationController(
-        duration: const Duration(milliseconds: 100), vsync: this);
+    shakeController = AnimationController(duration: const Duration(milliseconds: 100), vsync: this);
 
     curve = CurvedAnimation(parent: moveController, curve: Curves.bounceOut);
 
@@ -86,7 +86,7 @@ class WelcomeTextState extends State<WelcomeText>
 
     // 下落动画延迟
     var delay = 100 * Random().nextInt(10);
-    Future.delayed(Duration(milliseconds: delay),() {
+    Future.delayed(Duration(milliseconds: delay), () {
       moveController.forward();
     });
 
