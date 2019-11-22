@@ -1,6 +1,6 @@
 # Listify
 
-A todo list base Flutter.
+基于Flutter待办事项
 
-## Getting Started
+## 运行
 flutter run
